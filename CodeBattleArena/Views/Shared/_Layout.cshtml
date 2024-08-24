@@ -1,0 +1,292 @@
+﻿@inject IHttpContextAccessor httpContextAccessor
+
+@using System.Security.Claims
+@{
+    var IdPlayer = User.FindFirstValue(ClaimTypes.NameIdentifier);
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - CodeBattleArena</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/CodeBattleArena.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/monaco-editor@0.21.2/min/vs/editor/editor.main.css">
+    <link rel="stylesheet" href="~/css/darklyTheme.css" />
+
+    @{
+        if (httpContextAccessor.HttpContext.Request.Cookies["theme"] != null)
+        {
+            var theme = httpContextAccessor.HttpContext.Request.Cookies["theme"].ToString();
+            if (theme == "Darkly")
+            {
+                    <link rel="stylesheet" href="~/css/darklyTheme.css" />
+            }
+            if (theme == "Minty")
+            {
+                    <link rel="stylesheet" href="~/css/mintyTheme.css" />
+            }
+            if (theme == "Sketch")
+            {
+                    <link rel="stylesheet" href="~/css/sketchyTheme.css" />
+            }
+        }
+    }
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm border-bottom border-success box-shadow mb-0">
+            <div class="container-fluid">
+                <a class="navbar-brand text-success me-4" asp-area="" asp-controller="Home" asp-action="HomePage">Code Battle Arena</a>
+                <div class="vr me-3"></div>
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                    <ul class="navbar-nav flex-grow-1">
+                        <li class="nav-item">
+                            <a class="nav-link text-success" asp-area="" asp-controller="Home" asp-action="HomePage">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-success" asp-area="" asp-controller="Home" asp-action="Info">Information</a>
+                        </li>
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <li class="nav-item dropdown">
+                                <a class="nav-link text-success" href="#" id="dropdownMenuSession" role="button" data-bs-toggle="dropdown" aria-expanded="false">Session</a>
+                                <ul class="dropdown-menu" aria-labelledby="dropdownMenuSession">
+                                    <li><h6 class="dropdown-header">List of open sessions:</h6></li>
+                                    <li><a class="dropdown-item" href="/Session/ListSession?state=Public">Public List</a></li>
+
+                                    <li><h6 class="dropdown-header">List of closed sessions:</h6></li>
+                                    <li><a class="dropdown-item" href="/Session/ListSession?state=Private">Private List</a></li>
+                                </ul>
+                            </li>
+                        }
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <li class="nav-item dropdown">
+                                <a class="nav-link text-success" href="#" id="dropdownMenuAdmin" role="button" data-bs-toggle="dropdown" aria-expanded="false">Admin</a>
+                                <ul class="dropdown-menu" aria-labelledby="dropdownMenuAdmin">
+                                    <li><h6 class="dropdown-header">Add Photo Avatar:</h6></li>
+                                    <li><a class="dropdown-item" href="/Admin/AddPhotoAvatar">Add Avatar</a></li>
+
+                                    <li><h6 class="dropdown-header">Add Task:</h6></li>
+                                    <li><a class="dropdown-item" href="/Admin/AddTask">Add Task</a></li>
+
+                                    <li><h6 class="dropdown-header">List Task:</h6></li>
+                                    <li><a class="dropdown-item" href="/Session/ListTask">List Task</a></li>
+                                </ul>
+                            </li>
+                        }
+                    </ul>
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <div class="ms-auto">
+                            <a class="nav-link text-success text-decoration-none text-inherit me-3" href="#" id="dropdownMenuMessage" data-bs-toggle="dropdown" aria-expanded="false">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-chat-left-dots" viewBox="0 0 16 16">
+                                    <path d="M14 1a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H4.414A2 2 0 0 0 3 11.586l-2 2V2a1 1 0 0 1 1-1zM2 0a2 2 0 0 0-2 2v12.793a.5.5 0 0 0 .854.353l2.853-2.853A1 1 0 0 1 4.414 12H14a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2z" />
+                                    <path d="M5 6a1 1 0 1 1-2 0 1 1 0 0 1 2 0m4 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0m4 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0" />
+                                </svg>
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuMessage">
+
+                                <li>
+                                    <h6 class="dropdown-header">Find your friends:</h6>
+                                </li>
+                                <li><a class="dropdown-item" href="/Player/FindFriends">Find friend</a></li>
+
+                                <li>
+                                    <h6 class="dropdown-header">Personal chats:</h6>
+                                </li>
+                                <li><a class="dropdown-item" href="/Chat/GetPersonalChats">Chats</a></li>
+
+                                <li>
+                                    <h6 class="dropdown-header">My friends:</h6>
+                                </li>
+                                <li><a class="dropdown-item" href="/Player/GetFriends">My friends</a></li>
+
+                            </ul>
+                        </div>
+                    }
+                    <div class="ms-auto">
+                        <a class="nav-link text-success text-decoration-none text-inherit me-3" href="#" id="dropdownMenuAccaunt" data-bs-toggle="dropdown" aria-expanded="false">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-user text-success">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="12" cy="7" r="4"></circle>
+                            </svg>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuAccaunt">
+                            @if (User.Identity.IsAuthenticated)
+                            {
+                                <li>
+                                    <h6 class="dropdown-header">My page:</h6>
+                                </li>
+                                <li><a class="dropdown-item" href="/Player/InfoPlayer?playerId=@IdPlayer">My page</a></li>
+
+                                <li>
+                                    <h6 class="dropdown-header">Log out of your account:</h6>
+                                </li>
+                                <li><a class="dropdown-item" href="/Account/Clouse">Log out</a></li>
+                            }
+                            else
+                            {
+                                <li>
+                                    <h6 class="dropdown-header">I don't have an account:</h6>
+                                </li>
+                                <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#formAccauntRegistrationModal">Registration</a></li>
+
+                                <li>
+                                    <h6 class="dropdown-header">I have already created an account:</h6>
+                                </li>
+                                <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#formAccauntAuthorizationModal">Authorization</a></li>
+                            }
+                        </ul>
+                    </div>
+                    <div class="ms-auto">
+                        <form id="themeForm" method="post" class="form-inline">
+                            <select name="theme" id="theme" class="form-control mr-2">
+                                <option selected disabled>Themes</option>
+                                <option value="Darkly">Darkly</option>
+                                <option value="Minty">Minty</option>
+                                <option value="Sketch">Sketch</option>
+                            </select>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+    @if (httpContextAccessor.HttpContext.Request.Cookies["IdSession"] != null)
+    {
+        var sessionName = httpContextAccessor.HttpContext.Request.Cookies["NameSession"];
+        var stateSassion = httpContextAccessor.HttpContext.Request.Cookies["StateSassion"];
+        var maxPlayers = httpContextAccessor.HttpContext.Request.Cookies["AmountPiople"];
+        var difficulty = httpContextAccessor.HttpContext.Request.Cookies["Difficulty"];
+        var language = httpContextAccessor.HttpContext.Request.Cookies["LangProgramming"];
+
+        <div class="border-bottom border-success rounded p-1 mb-3 px-3">
+            <div class="d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">
+                    Session: @sessionName - (@stateSassion)
+                </h5>
+                <div class="ms-auto">
+                    <a class="btn btn-success mx-3 text-dark" type="button" asp-controller="Session" asp-action="InfoSession">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-info-square" viewBox="0 0 16 16">
+                            <path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2z" />
+                            <path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0" />
+                        </svg>
+                    </a>
+                    <button class="btn btn-success text-dark" type="button" data-bs-toggle="collapse" data-bs-target="#sessionDetails" aria-expanded="false" aria-controls="sessionDetails">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-hand-index-thumb" viewBox="0 0 16 16">
+                            <path d="M6.75 1a.75.75 0 0 1 .75.75V8a.5.5 0 0 0 1 0V5.467l.086-.004c.317-.012.637-.008.816.027.134.027.294.096.448.182.077.042.15.147.15.314V8a.5.5 0 0 0 1 0V6.435l.106-.01c.316-.024.584-.01.708.04.118.046.3.207.486.43.081.096.15.19.2.259V8.5a.5.5 0 1 0 1 0v-1h.342a1 1 0 0 1 .995 1.1l-.271 2.715a2.5 2.5 0 0 1-.317.991l-1.395 2.442a.5.5 0 0 1-.434.252H6.118a.5.5 0 0 1-.447-.276l-1.232-2.465-2.512-4.185a.517.517 0 0 1 .809-.631l2.41 2.41A.5.5 0 0 0 6 9.5V1.75A.75.75 0 0 1 6.75 1M8.5 4.466V1.75a1.75 1.75 0 1 0-3.5 0v6.543L3.443 6.736A1.517 1.517 0 0 0 1.07 8.588l2.491 4.153 1.215 2.43A1.5 1.5 0 0 0 6.118 16h6.302a1.5 1.5 0 0 0 1.302-.756l1.395-2.441a3.5 3.5 0 0 0 .444-1.389l.271-2.715a2 2 0 0 0-1.99-2.199h-.581a5 5 0 0 0-.195-.248c-.191-.229-.51-.568-.88-.716-.364-.146-.846-.132-1.158-.108l-.132.012a1.26 1.26 0 0 0-.56-.642 2.6 2.6 0 0 0-.738-.288c-.31-.062-.739-.058-1.05-.046zm2.094 2.025"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            <div class="collapse" id="sessionDetails">
+                <p><strong>Max Players:</strong> @maxPlayers</p>
+                <p><strong>Difficulty:</strong> @difficulty</p>
+                <p><strong>Language:</strong> @language</p>
+
+                <a asp-controller="Session" asp-action="LeaveSession" class="btn btn-danger mb-3">Leave Session</a>
+            </div>
+        </div>
+
+        <div class="offcanvas offcanvas-end" style="width: 35%;" tabindex="-1" id="chatPanel" aria-labelledby="chatPanelLabel">
+            <div class="offcanvas-header">
+                <h5 class="offcanvas-title" id="chatPanelLabel">Chat Session</h5>
+                <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+            </div>
+            <div class="offcanvas-body d-flex flex-column">
+                <div class="messages-container border border-2 border-success flex-grow-1 overflow-y-auto mb-3" style="padding: 10px;">
+                    <ul id="messagesListSessionChat" style="list-style-type: none; padding: 0;">
+                        <!-- Messages will be appended here -->
+                    </ul>
+                </div>
+
+                <div class="message-input d-flex flex-row align-items-center">
+                    <input type="hidden" id="userInputSessionChat" class="form-control mb-2" value="@httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.Name)">
+                    <input type="hidden" id="idSessionChat" class="form-control mb-2" value="@httpContextAccessor.HttpContext.Request.Cookies["IdSession"]">
+
+                    <div class="flex-grow-1 me-2">
+                        <input type="text" id="messageInputSessionChat" class="form-control" placeholder="Enter your message">
+                    </div>
+
+                    <div>
+                        <button id="sendButtonSessionChat" class="btn btn-primary">Send</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Button to toggle chat panel -->
+        <button class="btn btn-success position-fixed text-dark" style="top: 50%; right: 1rem; transform: translateY(-50%); z-index: 999;" data-bs-toggle="offcanvas" data-bs-target="#chatPanel" aria-controls="chatPanel">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-chat-left-text" viewBox="0 0 16 16">
+                <path d="M14 1a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H4.414A2 2 0 0 0 3 11.586l-2 2V2a1 1 0 0 1 1-1zM2 0a2 2 0 0 0-2 2v12.793a.5.5 0 0 0 .854.353l2.853-2.853A1 1 0 0 1 4.414 12H14a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2z" />
+                <path d="M3 3.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5M3 6a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9A.5.5 0 0 1 3 6m0 2.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5" />
+            </svg>
+        </button>
+    }
+    <div class="@ViewData["ContainerClasses"] ?? " container"">
+        <div class="pb-5">
+            <main role="main" class="pb-5">
+                @RenderBody()
+            </main>
+        </div>
+    </div>
+
+    <div id="overlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.8); z-index: 1000; display: none;"></div>
+
+    <div id="notificationContainer" class="fixed-bottom p-3">
+        <!-- Контейнер для уведомлений -->
+        <div id="notificationFriend" class="alert alert-info" style="display: none;"></div>
+
+        <div id="notificationSession" class="alert alert-success" style="display: none;"></div>
+
+        <div style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 1001;">
+            <div id="notificationSessionBlackout" style="position: relative; z-index: 1002; width: 100%; max-width: 500px; text-align: center; display: none;" class="alert alert-success fs-1"></div>
+        </div>
+    </div>
+
+
+
+    <div id="notification" class="toast position-fixed bottom-0 end-0 m-3" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header">
+            <strong class="me-auto">Notification</strong>
+            <button type="button" class="btn-close" aria-label="Close" onclick="closeNotification()"></button>
+        </div>
+        <div class="toast-body">
+            <span id="notification-message"></span>
+            <button id="join-btn" class="btn btn-primary btn-sm ms-2">Join</button>
+        </div>
+    </div>
+
+    <footer class="border-top footer text-muted">
+        <div class="container">
+            &copy; 2024 - CodeBattleArena - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+        </div>
+    </footer>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/5.0.9/signalr.min.js"></script>
+
+    <script src="~/js/messageChat.js"></script>
+    <script src="~/js/messageSessionChat.js"></script>
+    
+
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+
+<partial name="/Views/Account/_AccountRegisration.cshtml" model="new PlayerModel()" />
+<partial name="/Views/Account/_AccountAuthorization.cshtml" />
+
+</html>
+
+@section Scripts {
+    <script>
+
+    </script>
+}

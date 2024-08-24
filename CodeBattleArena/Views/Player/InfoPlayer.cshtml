@@ -1,0 +1,80 @@
+﻿@model PlayerModel
+
+
+<div class="container mt-5">
+    <div class="card border-success">
+        <div class="card-body d-flex align-items-center">
+            <img src="@(Model.Avatar ?? "/img/avatar/avatar1.png")" alt="Profile Image" class="rounded-circle me-3 text-center border border-2" style="width: 150px; height: 150px">
+            <div class="flex-grow-1">
+                <h3 class="mb-0">@Model.NickName</h3>
+                <p class="mb-1">@Model.Name</p>
+                @if(Model.IdPlayer == ViewBag.PlayerId)
+                {
+                    <p class="mb-1">@Model.Email</p>
+                }
+                <p class="mb-0 text-muted">@Model.AdditionalInformation</p>
+            </div>
+            <div class="text-center d-flex flex-column">
+                <div class="d-flex flex-row">
+                    <p class="mb-0 me-1">Victories</p>
+                    <div class="badge bg-secondary mx-auto">@Model.Victories</div>
+                </div>
+                <div class="mt-3">
+                    
+                    <a class="btn btn-primary" asp-controller="Player" asp-action="ListMyGame">
+                        My games
+                    </a>
+                    
+                </div>
+                <div class="mt-3">
+                    @if(Model.IdPlayer == ViewBag.PlayerId)
+                    {
+                        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#editProfileModal">
+                            Edit Profile
+                        </button>
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="card-footer">
+            <div class="mb-3"></div>
+        </div>
+    </div>
+</div>
+
+<partial name="/Views/Player/_EditPlayer.cshtml" model="@Model" />
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $("#buttonShow1").click(function () {
+                $("#infoPlayer2").hide();
+                $("#infoPlayer1").show();
+            });
+            $("#buttonShow2").click(function () {
+                $("#infoPlayer1").hide();
+                $("#infoPlayer2").show();
+            });
+        });
+
+        function selectAvatar(src) {
+            document.getElementById("selectedAvatar").src = src;
+        }
+
+        function getRelativePath(fullUrl) {
+            var baseUrl = window.location.origin;
+            return fullUrl.replace(baseUrl, "");
+        }
+
+        function updateProfileImage() {
+            var selectedSrc = document.getElementById("selectedAvatar").src;
+            var profileImage = document.getElementById("profileImage");
+            var inputImage = document.getElementById("inputImage");
+
+            if (profileImage && inputImage) {
+                profileImage.src = selectedSrc;
+                inputImage.value = getRelativePath(selectedSrc);
+            }
+        }
+    </script>
+}

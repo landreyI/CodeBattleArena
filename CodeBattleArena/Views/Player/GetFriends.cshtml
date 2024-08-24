@@ -1,0 +1,29 @@
+﻿@model Dictionary<int, string>
+
+@if (Model == null || Model.Count == 0)
+{
+    <div>You don't have any friends yet.</div>
+}
+else
+{
+    <div class="container mt-5">
+        <h5 class="mb-4">My friends</h5>
+
+        <div class="scroll-container d-flex flex-column p-3">
+            @foreach (var player in Model)
+            {
+                <div class="mt-3 d-flex justify-content-between player-item" data-player-nickname="@player.Value">
+                    <a asp-controller="Player" asp-action="InfoPlayer" asp-route-playerId="@player.Key"
+                    class="text-dark btn btn-light btn-invite-player w-100 me-2">@player.Value</a>
+
+                    <a asp-controller="Chat" asp-action="PersonalChat" asp-route-recipientId="@player.Key" class="btn btn-primary">💬</a>
+
+                    <form asp-controller="Player" asp-action="DeleteFriend" method="post" class="ajax-form-reload">
+                        <input type="hidden" name="idFriend" value="@player.Key" />
+                        <button type="submit" class="text-dark btn btn-danger mx-2">🗑️</button>
+                    </form>
+                </div>
+            }
+        </div>
+    </div>
+}

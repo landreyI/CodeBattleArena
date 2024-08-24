@@ -1,0 +1,33 @@
+﻿@model List<InputDataModel>
+
+<div class="modal fade" id="formInputDataModal" tabindex="-1" aria-labelledby="formInputDataModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="formInputDataModalLabel">Input Data List</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                @if(Model == null || Model.Count == 0)
+                {
+                    <h7>Input list is empty!</h7>
+                }
+                else
+                {
+                    <form id="inputDataForm">
+                        <div id="listInputData">
+                            @foreach (var inputData in Model)
+                            {
+                                <button class="btn btn-light btn-add-inputData" data-inputdata-id="@inputData.IdInputData" data-selected="false">@inputData.Data</button>
+                            }
+                        </div>
+
+                        <div class="mt-2">
+                            <button type="submit" class="btn btn-success">Further</button>
+                        </div>
+                    </form>
+                }
+            </div>
+        </div>
+    </div>
+</div>

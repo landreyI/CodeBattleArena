@@ -1,0 +1,312 @@
+﻿@model SessionModel
+
+@{
+    bool CheckFinish = true;
+}
+
+@if (Model == null)
+{
+    <div class="alert alert-danger text-center mt-3" role="alert">
+        <h4 class="alert-heading">No Session Created or Joined</h4>
+        <p>You have not created a session yet or you are not currently in one.</p>
+    </div>
+}
+else
+{
+    <div class="d-flex justify-content-center">
+        <div class="card text-center mt-3 me-4 border-success d-flex flex-column" style="display: inline-block;">
+            <div class="card-header bg-success text-white">
+                Session Details
+            </div>
+            <div class="card-body flex-grow-1">
+                <h5 class="card-title">Session Name: @Model.Name</h5>
+                <p class="card-text"><strong>State of Session:</strong> @Model.State</p>
+                <p class="card-text"><strong>Difficulty:</strong> @Model.Difficulty</p>
+                <p class="card-text mb-2"><strong>Language:</strong> @Model.LangProgramming</p>
+
+                <p class="card-text mb-2">
+                    @if (Model.TaskProgramming != null)
+                    {
+                        <strong>Task:</strong>
+                        <a asp-controller="Session" asp-action="InfoTask" asp-route-idTask="@Model.TaskProgramming.IdTaskProgramming" class="btn btn-success form-control me-2">
+                            @Model.TaskProgramming.Name
+                        </a>
+                    }
+                    else if (ViewBag.EditSession == true)
+                    {
+                         if(Model.TaskProgramming == null)
+                         {
+                             <strong>No task selected yet:</strong>
+                            <a asp-controller="Session" asp-action="ListTask" asp-route-isLang="@true" class="btn btn-success form-control me-2">
+                                List Task
+                             </a>
+                         }
+                    }
+                </p>
+            </div>
+            @if (Model.State == "Private" && ViewBag.EditSession == true)
+            {
+                <div class="card-body mt-auto">
+                    <form method="post" class="ajax-form d-flex align-items-center" asp-controller="Session" asp-action="ChangePassword">
+                        <input type="hidden" name="idSession" value="@Model.IdSession"/>
+                        <label class="form-label mb-0 me-2">🔒</label>
+                        <input type="text" name="password" class="form-control me-2" value="@Model.Password"/>
+                        <button type="submit" class="btn btn-success">Save</button>
+                    </form>
+                </div>
+            }
+            @if (ViewBag.LeaveSession == true)
+            {
+                <div class="card-footer mt-auto">
+                    <form method="post" asp-controller="Session" asp-action="LeaveSession">
+                        <button type="submit" class="btn btn-danger">Leave Session</button>
+                    </form>
+                </div>
+            }
+        </div>
+
+        <div class="card mt-3 border-success d-flex flex-column" style="display: inline-block;">
+            <div class="card-header bg-success text-white text-center">
+                Players in session
+            </div>
+            <div class="card-body flex-grow-1">
+                @if(Model.IsFinish == true)
+                {
+                    @foreach (var playerSession in Model.PlayerSessions)
+                    {
+                        if (playerSession.IdPlayer == Model.WinnerId)
+                        {
+                            <div class="mt-4">
+                                <h5 class="text-success">Winner: @playerSession.Player.Name</h5>
+                                <p>
+                                    <strong>Time:</strong> @playerSession.Time seconds<br />
+                                    <strong>Memory:</strong> @playerSession.Memory KB<br />
+                                </p>
+                            </div>
+                        }
+                    }
+
+                    <!-- Вывод всех участников -->
+                    <div class="mt-4">
+                        <h5 class="text-primary">All Participants:</h5>
+                        <ul class="list-group">
+                            @foreach (var playerSession in Model.PlayerSessions)
+                            {
+                                if (playerSession.IdPlayer != Model.WinnerId)
+                                {
+                                    <li class="list-group-item">
+                                        <strong>@playerSession.Player.Name</strong> -
+                                        Time: @playerSession.Time seconds,
+                                        Memory: @playerSession.Memory KB
+                                    </li>
+                                }
+                            }
+                        </ul>
+                    </div>
+                }
+                else
+                {
+                    @if (Model.PlayerSessions == null || Model.PlayerSessions.Count == 0)
+                    {
+                        <div>Looks like there was an error and no players were found in the session.</div>
+                    }
+                    else
+                    {
+                        <h5 class="card-title">Number of players: @Model.AmountPiople/@Model.PlayerSessions.Count</h5>
+                        <div class="scroll-container p-3" style="max-height: 40vh; overflow-y: auto; overflow-x: hidden;">
+
+                            @foreach (var user in Model.PlayerSessions)
+                            {
+                                <div id="playerSession-@user.IdPlayer" class="row align-items-center mb-2 alert-light p-1 rounded">
+                                    <div class="col">
+                                        <p class="card-text text-dark">@user.Player.Name</p>
+                                    </div>
+                                    @if (Model.State == "Private" && ViewBag.EditSession == true && Model.CreatorId != user.IdPlayer)
+                                    {
+                                        <div class="col-auto">
+                                            <form id="deletePlayer" asp-controller="Session" asp-action="DeletePlayer">
+                                                <input name="playerId" type="hidden" value="@user.IdPlayer" />
+                                                <button type="submit" class="btn btn-danger btn-delete-player px-2" data-player-id="@user.IdPlayer">🗑️</button>
+                                            </form>
+                                        </div>
+                                    }
+                                </div>
+                                @if (user.State != true) CheckFinish = false;
+                            }
+                        </div>
+                    }
+                }
+                
+            </div>
+            @if (ViewBag.EditSession == true && Model.DateStart == null)
+            {
+                <div class="card-footer mt-auto text-center">
+                    <button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#formAccauntAddPlayerToSessionModal">Invite player</button>
+                </div>
+            }
+        </div>
+    </div>
+    @if (ViewBag.EditSession == true && Model.DateStart == null)
+    {
+        <div align="center">
+            <form class="ajax-form" method="post" asp-controller="Session" asp-action="StartGame">
+                <button type="submit" class="btn btn-success m-3">
+                    <font size="5">Start the game</font>
+                </button>
+            </form>
+        </div>
+    }
+    @if (Model.DateStart != null && Model.IsFinish == false)
+    {
+        <div align="center">
+            <a asp-controller="Session" asp-action="ProcessCode" class="btn btn-success m-3">
+                <font size="5">Go to task</font>
+            </a>
+        </div>
+    }
+    @if (Model != null && CheckFinish && Model.IsFinish == false)
+    {
+        <div align="center">
+            <a asp-controller="Session" asp-action="FinishSession" class="btn btn-success m-3">
+                <font size="5">Finish</font>
+            </a>
+        </div>
+    }
+}
+
+
+<div class="modal fade" id="formAccauntAddPlayerToSessionModal" tabindex="-1" aria-labelledby="formAccauntAddPlayerToSessionModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="formAccauntAddPlayerToSessionModalLabel">Invite friend</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="addPlayerForm" method="post" asp-controller="Session" asp-action="AddPlayer">
+                    <div class="scroll-container p-3" style="max-height: 40vh; overflow-y: auto; overflow-x: hidden;">
+                        <div id="playerButtons">
+                            @if (ViewBag.FriendsPlayer == null || ViewBag.FriendsPlayer.Count == 0)
+                            {
+                                <div>Find friends so you can add them to the session.</div>
+                            }
+                            else
+                            {
+                                @foreach (var user in ViewBag.FriendsPlayer)
+                                {
+                                    <div class="mt-3 d-flex justify-content-between">
+                                        <a href="#" class="text-dark btn btn-light btn-invite-player w-100 me-2" data-player-id="@user.Key" data-selected="false">@user.Value</a>
+                                        <a asp-controller="Player" asp-action="InfoPlayer" asp-route-playerId="@user.Key" class="btn btn-warning">🔍</a>
+                                    </div>
+                                }
+                            }
+                        </div>
+                    </div>
+
+
+                    <div class="mt-2">
+                        <button type="submit" class="btn btn-success">Invite</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            var idPlayers = [];
+
+
+            $("#deletePlayer").submit(function (event) {
+                event.preventDefault();
+
+                var form = $(this);
+
+                var playerId = $(this).find('input[name="playerId"]').val();
+
+                $.ajax({
+                    type: form.attr('method'),
+                    url: form.attr('action'),
+                    data: form.serialize(),
+                    success: function (response) {
+                        // Handle success (e.g., show a message or remove the player from the UI)
+                        if (response.success) {
+                            showMessage("Successful!");
+                            $('#playerSession-' + playerId).remove();
+                        } else {
+                            var errorMessage = response.errorMessage;
+                            showMessage(errorMessage, false);
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        var errorMessage = xhr.status + ': ' + xhr.statusText;
+                        showMessage('Error - ' + errorMessage, false);
+                    }
+                });
+            });
+
+            // Обработчик клика по кнопкам игроков
+            $(document).on('click', '.btn-invite-player', function (event) {
+                event.preventDefault();
+
+                var button = $(this);
+                var playerId = parseInt(button.data('player-id'));
+                var isSelected = button.data('selected');
+
+                // Проверка наличия класса btn-success
+                if (isSelected) {
+                    button.data('selected', false).removeClass('btn-success').addClass('btn-light');
+                    // Удаление ID игрока из массива
+                    idPlayers = idPlayers.filter(id => id !== playerId);
+                } else {
+                    button.data('selected', true).removeClass('btn-light').addClass('btn-success');
+                    // Добавление ID игрока в массив
+                    idPlayers.push(playerId);
+                }
+            });
+
+
+            // Обработчик отправки формы
+            $("#addPlayerForm").submit(function (event) {
+                event.preventDefault();
+
+                // Очистка предыдущих скрытых полей, если они есть
+                $('input[name="idPlayers"]').remove();
+
+                // Добавление текущих значений массива как скрытые поля
+                idPlayers.forEach(function (id) {
+                    $('<input>').attr({
+                        type: 'hidden',
+                        name: 'idPlayers',
+                        value: id
+                    }).appendTo('#addPlayerForm');
+                });
+
+                var form = $(this);
+                $.ajax({
+                    type: form.attr('method'),
+                    url: form.attr('action'),
+                    data: form.serialize(),
+                    success: function (response) {
+                        idPlayers = [];
+                        $('#playerButtons .btn-invite-player').removeClass('btn-success').addClass('btn-light');
+
+                        if (response.success) {
+                            $('#formAccauntAddPlayerToSessionModal').modal('hide');
+                            showMessage("Successful!");
+                        } else {
+                            var errorMessage = response.errorMessage;
+                            showMessage(errorMessage, false);
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        var errorMessage = xhr.status + ': ' + xhr.statusText;
+                        showMessage('Error - ' + errorMessage, false);
+                    }
+                });
+            });
+        });
+    </script>
+}

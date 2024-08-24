@@ -1,0 +1,119 @@
+﻿@model TaskModel
+
+<div class="container mt-5">
+    @if (ViewBag.ErrorMessage != null)
+    {
+        <div class="alert alert-danger" role="alert">
+            @ViewBag.ErrorMessage
+        </div>
+    }
+
+    <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">EditTask</h5>
+        </div>
+        <div class="card-body">
+            <form id="addTaskForm" method="post" asp-controller="Admin" asp-action="EditTask">
+                <input type="hidden" asp-for="IdTask"/>
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Name</label>
+                        <input type="text" asp-for="NameTask" class="form-control" />
+                        <span asp-validation-for="NameTask" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Lang</label>
+                        <select asp-for="LangProgramming" class="form-select">
+                            <option selected disabled>Select a language</option>
+                            @foreach (var lang in Model.LangProgrammings.LangProgrammings)
+                            {
+                                <option value="@lang.Key">@lang.Value</option>
+                            }
+                        </select>
+                        <span asp-validation-for="LangProgramming" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Difficulty</label>
+                        <select asp-for="Difficulty" class="form-select">
+                            <option value="Easy" class="text-success">Easy</option>
+                            <option value="Medium" class="text-warning">Medium</option>
+                            <option value="Hard" class="text-danger">Hard</option>
+                        </select>
+                        <span asp-validation-for="Difficulty" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Text Task</label>
+                        <textarea class="form-control" asp-for="TextTask" rows="3" placeholder="Text Task"></textarea>
+                        <span asp-validation-for="TextTask" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Preparation</label>
+                        <textarea class="form-control" asp-for="Preparation" rows="3" placeholder="Preparation(code)"></textarea>
+                        <span asp-validation-for="Preparation" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Verification Code</label>
+                        <textarea class="form-control" asp-for="VerificationCode" rows="3" placeholder="Verification(code)"></textarea>
+                        <span asp-validation-for="VerificationCode" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <div class="d-flex align-items-center">
+                            <button id="addInputDataBtn" class="btn btn-primary me-2">Add Input Data</button>
+                            <div class="d-flex ms-auto">
+                                <button id="deleteInputDataBtn" class="btn btn-danger">Delete Input Data</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <button id="showModalInputData" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#formInputDataModal">
+                            Select input data
+                        </button>
+                    </div>
+                </div>
+
+
+                <div class="row mb-3">
+                    <div class="col-md-6" id="InputDataSelect">
+                        @if (Model.taskInputDataList != null && Model.taskInputDataList.Count != 0)
+                        {
+                            foreach (var taskInputData in Model.taskInputDataList)
+                            {
+                                <div class="wrapperId-div">
+                                    <div class="d-flex">
+                                        <input type="text" class="form-control me-2 my-3" name="inputDataList[]" data-idInputData="@taskInputData.InputDataTaskId" value="@taskInputData.InputData.Data" readonly />
+                                        <input type="text" class="form-control me-2 my-3" name="idInputDataList[]" data-id="@taskInputData.InputDataTaskId" value="@taskInputData.Answer" readonly />
+
+                                        <button class="btn btn-danger my-3 delete-button">🗑️</button>
+                                    </div>
+                                </div>
+                            }
+                        }
+                    </div>
+                </div>
+
+                <input type="hidden" name="inputDataAddIdJson" />
+                <input type="hidden" name="inputDataCreateJson" />
+
+                <div class="text-end">
+                    <a asp-controller="Admin" asp-action="DeleteTask" asp-route-idTask="@Model.IdTask" class="btn btn-danger">🗑️</a>
+                    <button type="submit" class="btn btn-success">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<partial name="/Views/Admin/_ListInputDataTask.cshtml" model="@ViewBag.InputDataTask" />
+
+@section Scripts
+{
+    <script src="~/js/taskAddEditScript.js"></script>
+}

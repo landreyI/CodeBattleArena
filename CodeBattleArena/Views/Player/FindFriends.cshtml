@@ -1,0 +1,133 @@
+﻿@model Dictionary<int, string>
+
+<style>
+    .scroll-container {
+        max-height: 70vh;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    .player-item {
+        transition: opacity 0.3s ease, height 0.3s ease; /* Add transition for height */
+    }
+
+        .player-item.hidden {
+            opacity: 0;
+            height: 0; /* Collapse the height of hidden items */
+            margin: 0; /* Remove margins of hidden items */
+            padding: 0; /* Remove padding of hidden items */
+        }
+</style>
+
+@if (Model == null || Model.Count == 0)
+{
+    <div>Looks like there was an error and no players were found in the session.</div>
+}
+else
+{
+    <div class="container mt-5">
+        <h5 class="mb-4">Invite friend</h5>
+        <form id="addPlayerFriendForm" method="post" asp-controller="Player" asp-action="AddFriend">
+            <div class="mb-3">
+                <input type="text" id="searchPlayer" class="form-control" placeholder="Search for players by nickname" />
+            </div>
+            <div class="scroll-container d-flex flex-column p-3">
+                <div id="playerButtons">
+                    @foreach (var player in Model)
+                    {
+                        <div class="mt-3 d-flex justify-content-between player-item" data-player-nickname="@player.Value">
+                            <a href="#" class="text-dark btn btn-light btn-invite-player w-100 me-2" data-player-id="@player.Key">@player.Value</a>
+                            <a asp-controller="Player" asp-action="InfoPlayer" asp-route-playerId="@player.Key" class="btn btn-warning">🔍</a>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <div class="mt-2">
+                <button type="submit" class="btn btn-success">Invite</button>
+            </div>
+        </form>
+    </div>
+}
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            var idPlayers = [];
+
+            $(document).on('click', '.btn-invite-player', function (event) {
+                event.preventDefault();
+
+                var button = $(this);
+                var playerId = parseInt(button.data('player-id'));
+
+                if (button.hasClass('btn-success')) 
+                {
+                    button.removeClass('btn-success').addClass('btn-light');
+                    idPlayers = idPlayers.filter(id => id !== playerId);
+                } 
+                else 
+                {
+                    button.removeClass('btn-light').addClass('btn-success');
+                    idPlayers.push(playerId);
+                }
+            });
+
+            $("#addPlayerFriendForm").submit(function (event) {
+                event.preventDefault();
+
+                // Очистка предыдущих скрытых полей, если они есть
+                $('input[name="idPlayers"]').remove();
+
+                // Добавление текущих значений массива как скрытые поля
+                idPlayers.forEach(function (id) {
+                    $('<input>').attr({
+                        type: 'hidden',
+                        name: 'idPlayers',
+                        value: id
+                    }).appendTo('#addPlayerFriendForm');
+                });
+
+                var form = $(this);
+                $.ajax({
+                    type: form.attr('method'),
+                    url: form.attr('action'),
+                    data: form.serialize(),
+                    success: function (response) {
+                        idPlayers = [];
+                        $('#playerButtons .btn-invite-player').removeClass('btn-success').addClass('btn-light');
+
+                        if (response.success) {
+                            $('#formAccauntAddPlayerToSessionModal').modal('hide');
+                            showMessage("Successful!");
+                        } else {
+                            var errorMessage = response.errorMessage;
+                            showMessage(errorMessage, false);
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        var errorMessage = xhr.status + ': ' + xhr.statusText;
+                        showMessage('Error - ' + errorMessage, false);
+                    }
+                });
+            });
+
+            // Фильтрация игроков по имени
+            $('#searchPlayer').on('input', function () {
+                var searchValue = $(this).val().toLowerCase();
+
+                $('.player-item').each(function () {
+                    var playerName = $(this).attr('data-player-nickname').toLowerCase();
+
+                    console.log('Player name:', playerName);
+
+                    if (playerName.includes(searchValue)) {
+                        $(this).removeClass('hidden');
+                    } else {
+                        $(this).addClass('hidden');
+                    }
+                });
+            });
+        });
+    </script>
+}

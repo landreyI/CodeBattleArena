@@ -1,0 +1,67 @@
+﻿@model CreateSessionModel
+
+<div class="container mt-5">
+    @if (ViewBag.ErrorMessage != null)
+    {
+        <div class="alert alert-danger" role="alert">
+            @ViewBag.ErrorMessage
+        </div>
+    }
+
+    <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">Create Session</h5>
+        </div>
+        <div class="card-body">
+            <form method="post" asp-controller="Session" asp-action="CreateSession">
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Name Session</label>
+                        <input type="text" asp-for="Name" class="form-control" placeholder="Enter session name" />
+                        <span asp-validation-for="Name" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Lang</label>
+                        <select asp-for="LangProgramming" class="form-select">
+                            <option selected disabled>Select a language</option>
+                            @foreach (var lang in Model.LangProgrammings.LangProgrammings)
+                            {
+                                <option value="@lang.Key">@lang.Value</option>
+                            }
+                        </select>
+                        <span asp-validation-for="LangProgramming" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label">State</label>
+                        <select asp-for="State" class="form-select">
+                            <option>Public</option>
+                            <option>Private</option>
+                        </select>
+                        <span asp-validation-for="State" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Amount People</label>
+                        <input type="number" asp-for="AmountPiople" class="form-control" min="1" placeholder="Enter number of participants" />
+                        <span asp-validation-for="AmountPiople" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Difficulty</label>
+                        <select asp-for="Difficulty" class="form-select">
+                            <option value="Easy" class="text-success">Easy</option>
+                            <option value="Medium" class="text-warning">Medium</option>
+                            <option value="Hard" class="text-danger">Hard</option>
+                        </select>
+                        <span asp-validation-for="Difficulty" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="text-end">
+                    <button type="submit" class="btn btn-success">Create</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

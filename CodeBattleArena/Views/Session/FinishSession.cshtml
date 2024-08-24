@@ -1,0 +1,49 @@
+﻿@model SessionModel
+
+@{
+    ViewData["Title"] = "Session Finish";
+}
+
+<div class="container mt-5 text-center">
+    <h2 class="text-center text-success">Session Finish</h2>
+
+    <!-- Вывод победителя в карточке -->
+    @foreach (var playerSession in Model.PlayerSessions)
+    {
+        if (playerSession.IdPlayer == Model.WinnerId)
+        {
+            <div class="d-flex justify-content-center mt-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title text-success">Winner: @playerSession.Player.Name</h4>
+                        <p class="card-text">
+                            <strong>Time:</strong> @playerSession.Time seconds<br />
+                            <strong>Memory:</strong> @playerSession.Memory KB<br />
+                            <strong>Task:</strong> @playerSession.Session.TaskProgramming.Name<br />
+                            <strong>Difficulty:</strong> @playerSession.Session.TaskProgramming.Difficulty
+                        </p>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+
+    <!-- Вывод всех участников -->
+    <div class="mt-4">
+        <h4 class="text-primary">All Participants:</h4>
+        <ul class="list-group">
+            @foreach (var playerSession in Model.PlayerSessions)
+            {
+                if (playerSession.IdPlayer != Model.WinnerId)
+                {
+                    <li class="list-group-item">
+                        <strong>@playerSession.Player.Name</strong> -
+                        Time: @playerSession.Time seconds,
+                        Memory: @playerSession.Memory KB
+                    </li>
+                }
+            }
+        </ul>
+    </div>
+</div>
+

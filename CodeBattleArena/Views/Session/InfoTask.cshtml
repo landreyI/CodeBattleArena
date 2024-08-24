@@ -1,0 +1,59 @@
+﻿@model TaskProgrammingModel
+
+<div class="container mt-5">
+    @if (ViewBag.ErrorMessage != null)
+    {
+        <div class="alert alert-danger" role="alert">
+            @ViewBag.ErrorMessage
+        </div>
+    }
+
+    <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">InfoTask</h5>
+        </div>
+        <div class="card-body">
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Name</label>
+                        <input type="text" asp-for="Name" class="form-control" readonly />
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Difficulty</label>
+                        <input type="text" asp-for="Difficulty" class="form-control" readonly />
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Lang</label>
+                        <input type="text" asp-for="Lang" class="form-control" readonly />
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Text Task</label>
+                        <textarea class="form-control" asp-for="TextTask" rows="3" placeholder="Text Task" readonly></textarea>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        @if (Model.TaskInputData != null && Model.TaskInputData.Count != 0)
+                        {
+                            foreach (var inputData in Model.TaskInputData)
+                            {
+                                <div class="d-flex">
+                                    <input type="text" class="form-control me-2 my-3" value="@inputData.InputData.Data" readonly />
+                                    <input type="text" class="form-control me-2 my-3" value="@inputData.Answer" readonly />
+                                </div>
+                            }
+                        }
+                    </div>
+                </div>
+            <form class="ajax-form" method="post" asp-controller="Session" asp-action="AddTaskToSession">
+                <input type="hidden" name="IdTaskProgramming" value="@Model.IdTaskProgramming"/>
+                <div class="text-end">
+                    <button type="submit" class="btn btn-success">Make it a task in the session</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
