@@ -17,6 +17,20 @@ namespace CodeBattleArena.Controllers
         {
             return View();
         }
+
+        public IActionResult ErrorMesage(string mesage)
+        {
+            return View(mesage);
+        }
+
+        public IActionResult NoAuthorize()
+        {
+            return View();
+        }
+        public IActionResult NoAdmin()
+        {
+            return View();
+        }
         public IActionResult Info()
         {
             return View();

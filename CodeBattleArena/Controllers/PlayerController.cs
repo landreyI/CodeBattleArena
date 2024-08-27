@@ -47,11 +47,9 @@ namespace CodeBattleArena.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> ListMyGame()
+        public async Task<IActionResult> ListMyGame(int? idPlayer)
         {
-            int idPlayerAuth = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
-
-            var listMyGame = await dbService.PlayerService.MyGamesListAsync(idPlayerAuth);
+            var listMyGame = await dbService.PlayerService.MyGamesListAsync(idPlayer);
 
             return View(listMyGame);
         }

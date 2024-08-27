@@ -118,12 +118,12 @@ namespace CodeBattleArena.Controllers
 
             PlayerSessionModel playerSession = await dbService.SessionService.GetPlayerSessionAsync(IdSession, idPlayerAuth);
             if (playerSession == null)
-            { 
-                return NotFound("Error, you could not be found in the session database!");
+            {
+                return RedirectToAction("Home", "ErrorMessage", new { message = "Error, you could not be found in the session database!" });
             }
             if (playerSession.State == true)
             {
-                return BadRequest("You have already completed the task.");
+                return RedirectToAction("Home", "ErrorMessage", new { message = "You have already completed the task." });
             }
 
             string? codePlayer = null;
@@ -225,14 +225,9 @@ namespace CodeBattleArena.Controllers
 
             int? idPlayerAuth = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
 
-            if(string.IsNullOrEmpty(code))
+            if(string.IsNullOrEmpty(code) || !await dbService.SessionService.SaveCodePlayerAsync(IdSession, idPlayerAuth, code))
             {
-                return BadRequest("Failed to save code.");
-            }
-
-            if(!await dbService.SessionService.SaveCodePlayerAsync(IdSession, idPlayerAuth, code))
-            {
-                return BadRequest("Failed to save code.");
+                return RedirectToAction("Home", "ErrorMessage", new { message = "Failed to save code." });
             }
 
             return Ok();
@@ -458,10 +453,13 @@ namespace CodeBattleArena.Controllers
 
         public async Task<IActionResult> ListTask(bool isLang)
         {
+            ViewBag.LangProgrammings = new LangProgramming().LangProgrammings;
+
             if (!isLang)
                 return View(await dbService.TaskService.GetTaskListAsync());
             else
             {
+                ViewBag.IsLang = true;
                 string language = HttpContext.Request.Cookies["LangProgramming"];
                 return View(await dbService.TaskService.GetTaskListAsync(language));
             }
@@ -632,7 +630,7 @@ namespace CodeBattleArena.Controllers
                 return View(sessionModel);
             }
 
-            return BadRequest("Failed to determine winner.");
+            return RedirectToAction("Home", "ErrorMessage", new { message = "Failed to determine winner." });
         }
     }
 }

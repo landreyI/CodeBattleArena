@@ -2,6 +2,7 @@ using CodeBattleArena.Controllers;
 using CodeBattleArena.Data;
 using CodeBattleArena.Service;
 using CodeBattleArena.Service.DBServices;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
@@ -39,8 +40,8 @@ builder.Services.AddAuthentication("Cookies")
     {
         options.Cookie.HttpOnly = true;
         options.ExpireTimeSpan = TimeSpan.FromDays(1);
-        options.LoginPath = "/Account/Login";
-        options.AccessDeniedPath = "/Account/AccessDenied";
+        options.LoginPath = "/Home/NoAuthorize"; // Путь для перенаправления неавторизованных пользователей
+        options.AccessDeniedPath = "/Home/NoAdmin"; // Путь для перенаправления при доступе к запрещенной странице
         options.SlidingExpiration = true;
     });
 

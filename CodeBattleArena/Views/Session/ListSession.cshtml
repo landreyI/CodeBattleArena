@@ -10,9 +10,12 @@
 }
 else
 {
+    <div class="mb-3">
+        <input type="text" class="form-control filtration" placeholder="Search for session by name" />
+    </div>
     @foreach(var session in Model)
     {
-        <div class="card text-center mt-3 me-4 border-success d-flex flex-column" style="display: inline-block;">
+        <div class="main-item card text-center mt-3 me-4 border-success" data-main="@session.Name" style="display: flex; flex-direction: column;">
             <div class="card-header bg-success text-white">
                 <h5 class="card-title text-dark">Session Name: @session.Name</h5>
             </div>

@@ -62,6 +62,22 @@ $(document).ready(function () {
             }
         });
     });
+
+    // Фильтрация 
+    $('.filtration').on('input', function () {
+        let searchValue = $(this).val().toLowerCase();
+
+        $('.main-item').each(function () {
+            let name = $(this).attr('data-main').toLowerCase();
+
+            if (name.includes(searchValue)) {
+                console.log('Search name:', name);
+                $(this).show();
+            } else {
+                $(this).hide();
+            }
+        });
+    });
 });
 
 document.getElementById('theme').addEventListener('change', function () {

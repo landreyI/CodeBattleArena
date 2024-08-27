@@ -13,9 +13,57 @@
 }
 else
 {
+    <div class="container mt-3">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h5>Task Filtering</h5>
+            </div>
+            <div class="card-body">
+                <form id="filterForm">
+                    <div class="row gx-2">
+
+                        @if(ViewBag.IsLang == null || !ViewBag.IsLang)
+                        {
+                            <div class="col-md-4">
+                                <label class="form-label">Programming Language</label>
+                                <select id="languageSelect" class="form-select">
+                                    <option value="">Select a language</option>
+                                    @foreach (var lang in ViewBag.LangProgrammings)
+                                    {
+                                        <option value="@lang.Key">@lang.Value</option>
+                                    }
+                                </select>
+                            </div>
+                        }
+
+                        <div class="col-md-4">
+                            <label class="form-label">Difficulty</label>
+                            <select id="difficultySelect" class="form-select">
+                                <option value="">All Levels</option>
+                                <option value="Easy" class="text-success">Easy</option>
+                                <option value="Medium" class="text-warning">Medium</option>
+                                <option value="Hard" class="text-danger">Hard</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Task Name</label>
+                            <input type="text" id="taskName" class="form-control" placeholder="Enter name">
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col text-end">
+                            <button type="submit" class="btn btn-primary">Apply Filter</button>
+                            <button type="reset" class="btn btn-secondary">Reset</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     foreach(var task in Model)
     {
-        <div class="card shadow-sm m-5">
+        <div class="session-item card shadow-sm m-5" data-lang="@task.Lang" data-difficulty="@task.Difficulty" data-name="@task.Name">
             <div class="card-header bg-primary text-white">
                 <h5 class="mb-0">@task.Lang, Difficulty - @task.Difficulty</h5>
             </div>
@@ -34,4 +82,35 @@ else
             </div>
         </div>
     }
+}
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('#filterForm').on('submit', function (e) {
+                e.preventDefault();
+
+                let languageSelect = $('#languageSelect').val();
+                let difficultySelect = $('#difficultySelect').val();
+                let taskName = $('#taskName').val();
+
+                $('.session-item').each(function () {
+                    let language = $(this).attr('data-lang').toLowerCase();
+                    let difficulty = $(this).attr('data-difficulty').toLowerCase();
+                    let name = $(this).attr('data-name').toLowerCase();
+             
+                    let matchesLanguage = !languageSelect || language === languageSelect.toLowerCase();
+                    let matchesDifficulty = !difficultySelect || difficulty === difficultySelect.toLowerCase();
+                    let matchesName = !taskName || name.includes(taskName);
+             
+                    if (matchesLanguage && matchesDifficulty && matchesName) {
+                        $(this).show();
+                    } else {
+                        $(this).hide();
+                    }
+                });
+             
+            });
+        });
+    </script>
 }
