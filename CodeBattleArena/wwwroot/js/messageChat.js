@@ -6,24 +6,24 @@
 
     // Personal Chat
     connection.on("ReceiveMessageFromUserChat", function (userSenderNick, message, fontColor) {
-        var messagesList = document.getElementById("messagesLisChat");
+        let messagesList = document.getElementById("messagesLisChat");
         if (messagesList) {
-            var li = document.createElement("li");
+            let li = document.createElement("li");
             li.classList.add("list-group-item", "d-flex", "justify-content-start", "align-items-center");
 
-            var span = document.createElement("span");
+            let span = document.createElement("span");
             span.classList.add("alert", `alert-${fontColor}`, "d-inline-block", "mb-4", "me-1");
 
             // Получение текущего времени
-            var now = new Date();
-            var options = {
+            let now = new Date();
+            let options = {
                 day: '2-digit', // Двузначный день месяца
                 month: 'long', // Полное название месяца
                 hour: '2-digit', // Двузначный час
                 minute: '2-digit', // Двузначные минуты
                 hour12: false // 24-часовой формат времени
             };
-            var formattedTime = now.toLocaleString('en-US', options);
+            let formattedTime = now.toLocaleString('en-US', options);
             formattedTime = formattedTime.replace(',', '');
 
             // Формирование содержимого сообщения
@@ -49,7 +49,7 @@
                 location.reload();
             }, 100);
         } else {
-            var notification = document.getElementById("notificationFriend");
+            let notification = document.getElementById("notificationFriend");
             if (notification) {
                 notification.innerHTML = `<strong>${nickname}: ${message}</strong>`;
                 notification.style.display = "block";
@@ -78,8 +78,8 @@
     // Этот код срабатывает при загрузке страницы после перезагрузки
     window.onload = function () {
         // Проверяем, есть ли данные в sessionStorage
-        var message = sessionStorage.getItem("message");
-        var isBlackout = sessionStorage.getItem("isBlackout") === 'true';
+        let message = sessionStorage.getItem("message");
+        let isBlackout = sessionStorage.getItem("isBlackout") === 'true';
 
         // Если есть сообщение, показываем его
         if (message) {
@@ -93,8 +93,8 @@
 
     // Функция для отображения сообщения
     function showMessage(message, isBlackout) {
-        var notification;
-        var overlay = document.getElementById("overlay");
+        let notification;
+        let overlay = document.getElementById("overlay");
 
         if (isBlackout) notification = document.getElementById("notificationSessionBlackout");
         else notification = document.getElementById("notificationSession");
@@ -137,12 +137,12 @@
 
     // JoinSession
 
-    var toastElement = document.getElementById('notification');
-    var toast = new bootstrap.Toast(toastElement, { autohide: false });
+    let toastElement = document.getElementById('notification');
+    let toast = new bootstrap.Toast(toastElement, { autohide: false });
 
     connection.on("ReceiveMessageFromUserJoinSession", function (nickname, sessionId, message) {
-        var notificationMessage = document.getElementById("notification-message");
-        var joinButton = document.getElementById("join-btn");
+        let notificationMessage = document.getElementById("notification-message");
+        let joinButton = document.getElementById("join-btn");
 
         if (notificationMessage && joinButton) {
             notificationMessage.innerHTML = `<strong>${nickname}: ${message}</strong>`;
@@ -154,7 +154,7 @@
     });
 
     window.closeNotification = function () { // Объявление функции в глобальном контексте
-        var toastInstance = bootstrap.Toast.getInstance(toastElement);
+        let toastInstance = bootstrap.Toast.getInstance(toastElement);
         if (toastInstance) {
             toastInstance.hide();
         }

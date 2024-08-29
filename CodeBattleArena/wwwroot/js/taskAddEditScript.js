@@ -171,7 +171,7 @@
         let inputDataAddId = [];
         let inputDataCreate = [];
 
-        let isValid = true; // Флаг для проверки валидности
+        let isValid = true;
 
         $('#InputDataSelect').find('.wrapperId-div').each(function () {
             const inputData = $(this).find('input[type="text"][name="idInputDataList[]"]');
@@ -181,10 +181,8 @@
 
             // Проверяем, пустое ли поле ответа
             if (answer.trim() === '') {
-                // Если пустое, устанавливаем флаг isValid в false
                 isValid = false;
-                // Выводим сообщение об ошибке, например, рядом с полем ввода
-                $(this).find('.error-message').remove(); // Удаляем предыдущее сообщение об ошибке, если оно есть
+                $(this).find('.error-message').remove();
                 $(this).append('<div class="error-message text-danger">The response field cannot be empty!</div>');
             } else {
                 // Удаляем сообщение об ошибке, если поле заполнено
@@ -198,15 +196,11 @@
             const inputData = $(this).find('input[type="text"][name="inputDataList[]"]').val();
             const answer = $(this).find('input[type="text"][name="answerList[]"]').val();
 
-            // Проверяем, пустое ли поле ответа
             if (answer.trim() === '' || inputData.trim() === '') {
-                // Если пустое, устанавливаем флаг isValid в false
                 isValid = false;
-                // Выводим сообщение об ошибке, например, рядом с полем ввода
-                $(this).find('.error-message').remove(); // Удаляем предыдущее сообщение об ошибке, если оно есть
+                $(this).find('.error-message').remove();
                 $(this).append('<div class="error-message text-danger">The response field cannot be empty!</div>');
             } else {
-                // Удаляем сообщение об ошибке, если поле заполнено
                 $(this).find('.error-message').remove();
             }
 
@@ -230,13 +224,10 @@
         var wrapperIdDiv = button.closest('.wrapperId-div');
         var answerInput = wrapperIdDiv.find('input[name="idInputDataList[]"]');
 
-        // Получение идентификатора из data-id атрибута
         var inputDataId = parseInt(answerInput.attr('data-id'));
 
-        // Удаление элемента из списка
         InputDataList = InputDataList.filter(item => item.id !== inputDataId);
 
-        // Удаление элемента из DOM
         wrapperIdDiv.remove();
     });
 });

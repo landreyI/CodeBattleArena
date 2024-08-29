@@ -231,7 +231,7 @@ else
                     url: form.attr('action'),
                     data: form.serialize(),
                     success: function (response) {
-                        // Handle success (e.g., show a message or remove the player from the UI)
+
                         if (response.success) {
                             showMessage("Successful!");
                             $('#playerSession-' + playerId).remove();
@@ -247,7 +247,6 @@ else
                 });
             });
 
-            // Обработчик клика по кнопкам игроков
             $(document).on('click', '.btn-invite-player', function (event) {
                 event.preventDefault();
 
@@ -262,13 +261,11 @@ else
                     idPlayers = idPlayers.filter(id => id !== playerId);
                 } else {
                     button.data('selected', true).removeClass('btn-light').addClass('btn-success');
-                    // Добавление ID игрока в массив
                     idPlayers.push(playerId);
                 }
             });
 
 
-            // Обработчик отправки формы
             $("#addPlayerForm").submit(function (event) {
                 event.preventDefault();
 
