@@ -10,34 +10,39 @@
 }
 else
 {
-    <div class="mb-3">
+    <div class="mb-3 mx-4">
         <input type="text" class="form-control filtration" placeholder="Search for session by name" />
     </div>
-    @foreach(var session in Model)
-    {
-        <div class="main-item card text-center mt-3 me-4 border-success" data-main="@session.Name" style="display: flex; flex-direction: column;">
-            <div class="card-header bg-success text-white">
-                <h5 class="card-title text-dark">Session Name: @session.Name</h5>
-            </div>
-            <div class="card-body d-flex justify-content-around align-items-center">
-                <p class="card-text m-0"><strong>Difficulty:</strong> @session.Difficulty</p>
-                <p class="card-text m-0"><strong>Language:</strong> @session.LangProgramming</p>
-                <a class="btn btn-success" asp-controller="Session" asp-action="InfoSession" asp-route-sessionId="@session.IdSession">Info</a>
-                <form id="joinForm" class="ajax-form" method="post" asp-controller="Session" asp-action="JoinSession">
-                    <input type="hidden" name="sessionId" value="@session.IdSession" />
-                    <input type="hidden" name="isInvite" value="@false" />
+    <div class="container">
+        <div class="row g-4">
+            @foreach (var session in Model)
+            {
+                <div class="col-lg-4 col-md-6 col-sm-12">
+                    <div class="card custom-border text-center" style="max-width: 250px;">
+                        <div class="card-header bg-success text-white">
+                            <h5 class="card-title text-dark">Session Name: @session.Name</h5>
+                        </div>
+                        <div class="card-body d-flex flex-column justify-content-between">
+                            <p class="card-text"><strong>Difficulty:</strong> @session.Difficulty</p>
+                            <p class="card-text"><strong>Language:</strong> @session.LangProgramming</p>
+                            <a class="btn btn-success mb-2" asp-controller="Session" asp-action="InfoSession" asp-route-sessionId="@session.IdSession">Info</a>
 
-                    <div class="d-flex justify-content-around align-items-center">
-                        @if (session.State == "Private")
-                        {
-                            <input type="text" name="password" class="form-control" />
-                        }
+                            <form class="ajax-form mt-auto" method="post" asp-controller="Session" asp-action="JoinSession">
+                                <input type="hidden" name="sessionId" value="@session.IdSession" />
+                                <input type="hidden" name="isInvite" value="@false" />
 
-                        <button class="btn btn-success" type="submit">Join</button>
+                                @if (session.State == "Private")
+                                {
+                                    <input type="text" name="password" class="form-control mb-2" placeholder="Enter password" />
+                                }
+
+                                <button class="btn btn-success w-100" type="submit">Join</button>
+                            </form>
+                        </div>
                     </div>
-
-                </form>
-            </div>
+                </div>
+            }
         </div>
-    }
+    </div>
+
 }

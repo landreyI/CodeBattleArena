@@ -14,21 +14,21 @@
 else
 {
     <div class="d-flex justify-content-center">
-        <div class="card text-center mt-3 me-4 border-success d-flex flex-column" style="display: inline-block;">
-            <div class="card-header bg-success text-white">
+        <div class="card mt-3 me-4 border-success d-flex flex-column" style="display: inline-block;">
+            <div class="card-header bg-success text-white text-center fs-4">
                 Session Details
             </div>
             <div class="card-body flex-grow-1">
-                <h5 class="card-title">Session Name: @Model.Name</h5>
-                <p class="card-text"><strong>State of Session:</strong> @Model.State</p>
-                <p class="card-text"><strong>Difficulty:</strong> @Model.Difficulty</p>
-                <p class="card-text mb-2"><strong>Language:</strong> @Model.LangProgramming</p>
+                <p><strong>Session Name:</strong> @Model.Name</p>
+                <p ><strong>State of Session:</strong> @Model.State</p>
+                <p ><strong>Difficulty:</strong> @Model.Difficulty</p>
+                <p ><strong>Language:</strong> @Model.LangProgramming</p>
 
-                <p class="card-text mb-2">
+                <p class="mb-2">
                     @if (Model.TaskProgramming != null)
                     {
                         <strong>Task:</strong>
-                        <a asp-controller="Session" asp-action="InfoTask" asp-route-idTask="@Model.TaskProgramming.IdTaskProgramming" class="btn btn-success form-control me-2">
+                        <a asp-controller="Session" asp-action="InfoTask" asp-route-idTask="@Model.TaskProgramming.IdTaskProgramming" class="btn btn-success form-control mt-1 me-2">
                             @Model.TaskProgramming.Name
                         </a>
                     }
@@ -37,36 +37,38 @@ else
                          if(Model.TaskProgramming == null)
                          {
                              <strong>No task selected yet:</strong>
-                            <a asp-controller="Session" asp-action="ListTask" asp-route-isLang="@true" class="btn btn-success form-control me-2">
+                            <a asp-controller="Session" asp-action="ListTask" asp-route-isLang="@true" class="btn btn-success form-control mt-1 me-2">
                                 List Task
                              </a>
                          }
                     }
                 </p>
             </div>
-            @if (Model.State == "Private" && ViewBag.EditSession == true)
-            {
-                <div class="card-body mt-auto">
-                    <form method="post" class="ajax-form d-flex align-items-center" asp-controller="Session" asp-action="ChangePassword">
-                        <input type="hidden" name="idSession" value="@Model.IdSession"/>
-                        <label class="form-label mb-0 me-2">🔒</label>
-                        <input type="text" name="password" class="form-control me-2" value="@Model.Password"/>
-                        <button type="submit" class="btn btn-success">Save</button>
-                    </form>
-                </div>
-            }
-            @if (ViewBag.LeaveSession == true)
-            {
-                <div class="card-footer mt-auto">
-                    <form method="post" asp-controller="Session" asp-action="LeaveSession">
-                        <button type="submit" class="btn btn-danger">Leave Session</button>
-                    </form>
-                </div>
-            }
+            <div class="text-center">
+                @if (Model.State == "Private" && ViewBag.EditSession == true)
+                {
+                    <div class="card-body mt-auto">
+                        <form method="post" class="ajax-form d-flex align-items-center" asp-controller="Session" asp-action="ChangePassword">
+                            <input type="hidden" name="idSession" value="@Model.IdSession"/>
+                            <label class="form-label mb-0 me-2">🔒</label>
+                            <input type="text" name="password" class="form-control me-2" value="@Model.Password"/>
+                            <button type="submit" class="btn btn-success">Save</button>
+                        </form>
+                    </div>
+                }
+                @if (ViewBag.LeaveSession == true)
+                {
+                    <div class="card-footer mt-auto">
+                        <form method="post" asp-controller="Session" asp-action="LeaveSession">
+                            <button type="submit" class="btn btn-danger">Leave Session</button>
+                        </form>
+                    </div>
+                }
+            </div>
         </div>
 
         <div class="card mt-3 border-success d-flex flex-column" style="display: inline-block;">
-            <div class="card-header bg-success text-white text-center">
+            <div class="card-header bg-success text-white text-center fs-4">
                 Players in session
             </div>
             <div class="card-body flex-grow-1">
@@ -112,7 +114,7 @@ else
                     }
                     else
                     {
-                        <h5 class="card-title">Number of players: @Model.AmountPiople/@Model.PlayerSessions.Count</h5>
+                        <p><strong>Number of players:</strong> @Model.AmountPiople/@Model.PlayerSessions.Count</p>
                         <div class="scroll-container p-3" style="max-height: 40vh; overflow-y: auto; overflow-x: hidden;">
 
                             @foreach (var user in Model.PlayerSessions)
@@ -151,7 +153,7 @@ else
         <div align="center">
             <form class="ajax-form" method="post" asp-controller="Session" asp-action="StartGame">
                 <button type="submit" class="btn btn-success m-3">
-                    <font size="5">Start the game</font>
+                    <font class="fs-3" size="5">Start the game</font>
                 </button>
             </form>
         </div>
@@ -160,7 +162,7 @@ else
     {
         <div align="center">
             <a asp-controller="Session" asp-action="ProcessCode" class="btn btn-success m-3">
-                <font size="5">Go to task</font>
+                <font class="fs-3" size="5">Go to task</font>
             </a>
         </div>
     }
@@ -168,7 +170,7 @@ else
     {
         <div align="center">
             <a asp-controller="Session" asp-action="FinishSession" class="btn btn-success m-3">
-                <font size="5">Finish</font>
+                <font class="fs-3" size="5">Finish</font>
             </a>
         </div>
     }

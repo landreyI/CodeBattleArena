@@ -24,6 +24,7 @@ body {
 .card {
     position: relative;
     transition: transform 0.2s, filter 0.2s;
+    animation: fadeIn 0.8s ease-in-out;
 }
 
     .card::after {
@@ -55,3 +56,75 @@ body {
         .card:hover::after {
             opacity: 1; /* Делаем затемнение видимым при наведении */
         }
+
+
+.scroll-card {
+    display: none;
+    width: 100%;
+}
+
+
+@property --angle {
+    syntax: "<angle>";
+    initial-value: 0deg;
+    inherits: false;
+}
+/* Стили только для карточек с эффектом */
+.card-3d {
+    transition: transform 0.1s linear, box-shadow 0.3s ease-in-out, border 0.3s ease-in-out;
+    transform-style: preserve-3d;
+    transform-origin: center;
+    border-radius: 15px;
+    position: relative;
+}
+
+    .card-3d img {
+        width: 100%;
+        height: auto;
+        border-radius: 15px 15px 0 0;
+    }
+
+.custom-border::after,
+.custom-border::before {
+    content: '';
+    position: absolute;
+    height: 103%;
+    width: 103%;
+    top: 50%;
+    left: 50%;
+    translate: -50% -50%;
+    z-index: -1;
+    padding: 4px;
+    border-radius: inherit;
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+    mask: linear-gradient(white, white) content-box, linear-gradient(white, white);
+    mask-composite: exclude;
+}
+
+/* Первая полоска */
+.custom-border::after {
+    background-image: conic-gradient(from var(--angle), transparent 75%, #ff4545, #00ff99, #006aff, #ff0095, #ff4545);
+    animation: spin 3s linear infinite;
+}
+
+/* Вторая полоска */
+.custom-border::before {
+    background-image: conic-gradient(from calc(var(--angle) + 180deg), transparent 75%, #ff4545, #00ff99, #006aff, #ff0095, #ff4545);
+    animation: spin 3s linear infinite;
+}
+
+.custom-border:hover::after,
+.custom-border:hover::before {
+    opacity: 1;
+}
+
+@keyframes spin {
+    from {
+        --angle: 0deg;
+    }
+
+    to {
+        --angle: 360deg;
+    }
+}

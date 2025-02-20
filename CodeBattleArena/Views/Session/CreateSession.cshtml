@@ -9,20 +9,20 @@
     }
 
     <div class="card shadow-sm">
-        <div class="card-header bg-primary text-white">
-            <h5 class="mb-0">Create Session</h5>
+        <div class="card-header text-white text-center py-3 bg-primary" style="border-radius: 8px 8px 0 0;">
+            <h4 class="mb-0"><i class="bi bi-plus-circle"></i> Create Session</h4>
         </div>
-        <div class="card-body">
+        <div class="card-body p-4">
             <form method="post" asp-controller="Session" asp-action="CreateSession">
                 <div class="row mb-3">
                     <div class="col-md-6">
                         <label class="form-label">Name Session</label>
-                        <input type="text" asp-for="Name" class="form-control" placeholder="Enter session name" />
+                        <input type="text" asp-for="Name" class="form-control rounded-pill shadow-sm" placeholder="Enter session name" />
                         <span asp-validation-for="Name" class="text-danger"></span>
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Lang</label>
-                        <select asp-for="LangProgramming" class="form-select">
+                        <select asp-for="LangProgramming" class="form-select rounded-pill shadow-sm">
                             <option selected disabled>Select a language</option>
                             @foreach (var lang in Model.LangProgrammings.LangProgrammings)
                             {
@@ -35,31 +35,33 @@
                 <div class="row mb-3">
                     <div class="col-md-6">
                         <label class="form-label">State</label>
-                        <select asp-for="State" class="form-select">
-                            <option>Public</option>
-                            <option>Private</option>
+                        <select asp-for="State" class="form-select rounded-pill shadow-sm">
+                            <option style="background-color: lightgreen;">Public</option>
+                            <option style="background-color: lightcoral;">Private</option>
                         </select>
                         <span asp-validation-for="State" class="text-danger"></span>
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Amount People</label>
-                        <input type="number" asp-for="AmountPiople" class="form-control" min="1" placeholder="Enter number of participants" />
+                        <input type="number" asp-for="AmountPiople" class="form-control rounded-pill shadow-sm" min="1" placeholder="Enter number of participants" />
                         <span asp-validation-for="AmountPiople" class="text-danger"></span>
                     </div>
                 </div>
                 <div class="row mb-3">
                     <div class="col-md-6">
                         <label class="form-label">Difficulty</label>
-                        <select asp-for="Difficulty" class="form-select">
-                            <option value="Easy" class="text-success">Easy</option>
-                            <option value="Medium" class="text-warning">Medium</option>
-                            <option value="Hard" class="text-danger">Hard</option>
+                        <select asp-for="Difficulty" class="form-select rounded-pill shadow-sm">
+                            <option value="Easy" style="background-color: lightgreen;">Easy</option>
+                            <option value="Medium" style="background-color: #FFD700;">Medium</option>
+                            <option value="Hard" style="background-color: lightcoral;">Hard</option>
                         </select>
                         <span asp-validation-for="Difficulty" class="text-danger"></span>
                     </div>
                 </div>
-                <div class="text-end">
-                    <button type="submit" class="btn btn-success">Create</button>
+                <div class="text-center">
+                    <button type="submit" class="btn btn-success rounded-pill mt-3 px-5 py-2 shadow-lg" style="transition: 0.3s;">
+                        <h5 class="mb-0"><i class="bi bi-check-lg"></i> Create Session</h5>
+                    </button>
                 </div>
             </form>
         </div>

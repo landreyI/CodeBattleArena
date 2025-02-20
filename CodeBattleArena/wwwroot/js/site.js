@@ -78,6 +78,24 @@ $(document).ready(function () {
             }
         });
     });
+
+    document.querySelectorAll(".card-3d").forEach(card => {
+        let offsetCard = card.dataset.offset || 20;
+
+        card.addEventListener("mousemove", (e) => {
+            let rect = card.getBoundingClientRect();
+            let offsetX = 0.5 - (e.clientX - rect.left) / rect.width;
+            let offsetY = 0.5 - (e.clientY - rect.top) / rect.height;
+
+            card.style.transform = `translateY(${-offsetY * offsetCard}px)
+                                        rotateX(${-offsetY * offsetCard}deg)
+                                        rotateY(${offsetX * (offsetCard * 2)}deg)`;
+        });
+
+        card.addEventListener("mouseleave", () => {
+            card.style.transform = "rotateY(0deg) rotateX(0deg)";
+        });
+    });
 });
 
 document.getElementById('theme').addEventListener('change', function () {
@@ -123,4 +141,23 @@ function togglePasswordVisibilityAuth() {
 }
 function deleteCookie(name) {
     document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+}
+
+function typeText(element, text, speed, callback) {
+    let i = 0;
+    function type() {
+        if (i < text.length) {
+            if (text.charAt(i) === '\n') {
+                element.innerHTML += '<br>';
+            } else {
+                element.innerHTML += text.charAt(i);
+            }
+            i++;
+            setTimeout(type, speed);
+        }
+        else {
+            if (callback) callback(); // Вызываем callback после завершения печати текста
+        }
+    }
+    type();
 }

@@ -1,8 +1,8 @@
 ﻿<div class="container d-flex flex-column justify-content-center align-items-center vh-100">
     <div class="position-relative d-flex justify-content-center align-items-center" style="width: 60vw; height: 75vh;">
         <div class="text-center border border-success border-5 rounded p-4 " style="width: 50vw; height: 50vh;">
-            <h3 class="mb-4 m-3 fs-5 fs-md-3 ">Love to code and play? <br /> Start playing with friends in any programming language!</h3>
-            <a asp-controller="Session" asp-action="CreateSession" class="btn btn-success"><h4>Start</h4></a>
+            <div id="typing-text" class="mb-4 m-3 fs-5 fs-md-3" style="font-family: 'Source Code Pro', monospace;"></div>
+            <a id="startPlay" asp-controller="Session" asp-action="CreateSession" class="btn btn-success"><h4>Start</h4></a>
         </div>
         <div class="position-absolute" style="top: -40px; left: 30%; transform: translateX(-50%);">
             <img src="~/img/c.png" alt="с" class="card-img-top" style="width: 17vw; height: 17vh; object-fit: contain;">
@@ -30,3 +30,13 @@
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        const textElement = document.getElementById('typing-text');
+        const textToType = 'Love to code and play?\nStart playing with friends in any programming language!';
+        const typingSpeed = 60;
+
+        typeText(textElement, textToType, typingSpeed);
+    </script>
+}

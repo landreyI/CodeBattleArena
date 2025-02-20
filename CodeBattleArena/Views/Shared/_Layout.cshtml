@@ -42,7 +42,11 @@
             <div class="container-fluid">
                 <a class="navbar-brand text-success me-4" asp-area="" asp-controller="Home" asp-action="HomePage">Code Battle Arena</a>
                 <div class="vr me-3"></div>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse d-sm-inline-flex justify-content-between" id="navbarNav">
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
                             <a class="nav-link text-success" asp-area="" asp-controller="Home" asp-action="HomePage">Home</a>
@@ -248,7 +252,6 @@
             <div id="notificationSessionBlackout" style="position: relative; z-index: 1002; width: 100%; max-width: 500px; text-align: center; display: none;" class="alert alert-success fs-1"></div>
         </div>
     </div>
-
 
 
     <div id="notification" class="toast position-fixed bottom-0 end-0 m-3" role="alert" aria-live="assertive" aria-atomic="true">
